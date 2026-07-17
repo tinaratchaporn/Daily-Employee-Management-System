@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.2.2 (Python 3.13.3 on win32)" generated="2025-05-01T14:27:30.473133" rpa="false" schemaversion="5">
+<suite id="s1" name="Spotify Home Test" source="D:\project fullstack\Basic_Automation_Testing-W10\spotify_home_test.robot">
+<test id="s1-t1" name="ล็อกอินและค้นหาเพลงบน Spotify" line="11">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2025-05-01T14:27:30.926127" level="INFO">Opening browser 'chrome' to base url 'https://open.spotify.com/'.</msg>
+<arg>${URL}</arg>
+<arg>chrome</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2025-05-01T14:27:30.925847" elapsed="1.930162"/>
+</kw>
+<kw name="Maximize Browser Window" owner="SeleniumLibrary">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" start="2025-05-01T14:27:32.858221" elapsed="2.828972"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-05-01T14:27:39.689619" level="INFO">Slept 4 seconds.</msg>
+<arg>4s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-05-01T14:27:35.688039" elapsed="4.001831"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>//*[@id="global-nav-bar"]/div[3]/div/div[2]/button[2]/span</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-05-01T14:27:39.690423" elapsed="0.043722"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-05-01T14:27:43.735314" level="INFO">Slept 4 seconds.</msg>
+<arg>4s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-05-01T14:27:39.734538" elapsed="4.000995"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-05-01T14:27:43.736518" level="INFO">Clicking element '//*[@id="global-nav-bar"]/div[3]/div/div[2]/button[2]/span'.</msg>
+<arg>//*[@id="global-nav-bar"]/div[3]/div/div[2]/button[2]/span</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-05-01T14:27:43.736178" elapsed="0.137233"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>//*[@id="login-username"]</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-05-01T14:27:43.873907" elapsed="1.186242"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-05-01T14:27:49.061710" level="INFO">Slept 4 seconds.</msg>
+<arg>4s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-05-01T14:27:45.060586" elapsed="4.001587"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-05-01T14:27:49.064223" level="INFO">Typing text 'Hellotestspotify@gmail.com' into text field '//*[@id="login-username"]'.</msg>
+<arg>//*[@id="login-username"]</arg>
+<arg>${EMAIL}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-05-01T14:27:49.063393" elapsed="0.179579"/>
+</kw>
+<kw name="Wait Until Element Is Enabled" owner="SeleniumLibrary">
+<arg>//*[@id="login-button"]/span[1]</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is enabled.</doc>
+<status status="PASS" start="2025-05-01T14:27:49.243719" elapsed="0.030697"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-05-01T14:27:53.276013" level="INFO">Slept 4 seconds.</msg>
+<arg>4s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-05-01T14:27:49.274841" elapsed="4.001405"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-05-01T14:27:53.277653" level="INFO">Clicking element '//*[@id="login-button"]/span[1]'.</msg>
+<arg>//*[@id="login-button"]/span[1]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-05-01T14:27:53.277078" elapsed="0.099663"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>//*[@id="encore-web-main-content"]/div/div/div/div/form/div[2]/section/button</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-05-01T14:27:53.377557" elapsed="1.080218"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-05-01T14:27:58.458913" level="INFO">Slept 4 seconds.</msg>
+<arg>4s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-05-01T14:27:54.458138" elapsed="4.001037"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-05-01T14:27:58.460714" level="INFO">Clicking element '//*[@id="encore-web-main-content"]/div/div/div/div/form/div[2]/section/button'.</msg>
+<arg>//*[@id="encore-web-main-content"]/div/div/div/div/form/div[2]/section/button</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-05-01T14:27:58.460248" elapsed="0.090973"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>//*[@id="login-password"]</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-05-01T14:27:58.551739" elapsed="0.549742"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-05-01T14:28:03.102679" level="INFO">Slept 4 seconds.</msg>
+<arg>4s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-05-01T14:27:59.102002" elapsed="4.000793"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-05-01T14:28:03.103460" level="INFO">Typing text 'Hellotestspotify11' into text field '//*[@id="login-password"]'.</msg>
+<arg>//*[@id="login-password"]</arg>
+<arg>${PASSWORD}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-05-01T14:28:03.103223" elapsed="0.131576"/>
+</kw>
+<kw name="Wait Until Element Is Enabled" owner="SeleniumLibrary">
+<arg>//*[@id="login-button"]/span[1]</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is enabled.</doc>
+<status status="PASS" start="2025-05-01T14:28:03.235278" elapsed="0.033715"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-05-01T14:28:07.270925" level="INFO">Slept 4 seconds.</msg>
+<arg>4s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-05-01T14:28:03.269363" elapsed="4.001864"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-05-01T14:28:07.272624" level="INFO">Clicking element '//*[@id="login-button"]/span[1]'.</msg>
+<arg>//*[@id="login-button"]/span[1]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-05-01T14:28:07.272062" elapsed="0.092520"/>
+</kw>
+<kw name="Wait Until Page Contains Element" owner="SeleniumLibrary">
+<arg>//*[@id="main"]</arg>
+<arg>15s</arg>
+<doc>Waits until the element ``locator`` appears on the current page.</doc>
+<status status="PASS" start="2025-05-01T14:28:07.365135" elapsed="2.439467"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-05-01T14:28:13.808500" level="INFO">Slept 4 seconds.</msg>
+<arg>4s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-05-01T14:28:09.804976" elapsed="4.004210"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>//*[@id="global-nav-bar"]/div[2]/div/div/span/div/form/div[2]/input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-05-01T14:28:13.809931" elapsed="0.074332"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-05-01T14:28:17.885599" level="INFO">Slept 4 seconds.</msg>
+<arg>4s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-05-01T14:28:13.885066" elapsed="4.000650"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-05-01T14:28:17.886504" level="INFO">Typing text 'The Two Of Us shade' into text field '//*[@id="global-nav-bar"]/div[2]/div/div/span/div/form/div[2]/input'.</msg>
+<arg>//*[@id="global-nav-bar"]/div[2]/div/div/span/div/form/div[2]/input</arg>
+<arg>${SONG_NAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-05-01T14:28:17.886209" elapsed="0.263980"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-05-01T14:28:18.153065" level="INFO">Sending key(s) ('RETURN',) to //*[@id="global-nav-bar"]/div[2]/div/div/span/div/form/div[2]/input element.</msg>
+<msg time="2025-05-01T14:28:18.593260" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-05-01T14:28:18.593433" level="INFO">Releasing special key RETURN.</msg>
+<arg>//*[@id="global-nav-bar"]/div[2]/div/div/span/div/form/div[2]/input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-05-01T14:28:18.151772" elapsed="0.482740"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-05-01T14:28:22.635795" level="INFO">Slept 4 seconds.</msg>
+<arg>4s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-05-01T14:28:18.634950" elapsed="4.001084"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>//*[@id="searchPage"]/div/div/section[1]/div[2]/div/div/div/div[4]</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-05-01T14:28:22.636909" elapsed="0.034751"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-05-01T14:28:26.673815" level="INFO">Slept 4 seconds.</msg>
+<arg>4s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-05-01T14:28:22.672386" elapsed="4.001719"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-05-01T14:28:26.675465" level="INFO">Clicking element '//*[@id="searchPage"]/div/div/section[1]/div[2]/div/div/div/div[4]'.</msg>
+<arg>//*[@id="searchPage"]/div/div/section[1]/div[2]/div/div/div/div[4]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-05-01T14:28:26.675014" elapsed="0.231127"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-05-01T14:28:31.907664" level="INFO">Slept 5 seconds.</msg>
+<arg>5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-05-01T14:28:26.906785" elapsed="5.001123"/>
+</kw>
+<kw name="Capture Page Screenshot" owner="SeleniumLibrary">
+<msg time="2025-05-01T14:28:32.099923" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-1.png"&gt;&lt;img src="selenium-screenshot-1.png" width="800px"&gt;&lt;/a&gt;</msg>
+<doc>Takes a screenshot of the current page and embeds it into a log file.</doc>
+<status status="PASS" start="2025-05-01T14:28:31.908433" elapsed="0.191684"/>
+</kw>
+<kw name="Close Browser" owner="SeleniumLibrary">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-01T14:28:32.101010" elapsed="2.475057"/>
+</kw>
+<status status="PASS" start="2025-05-01T14:27:30.924368" elapsed="63.652566"/>
+</test>
+<status status="PASS" start="2025-05-01T14:27:30.475942" elapsed="64.103070"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat name="Spotify Home Test" id="s1" pass="1" fail="0" skip="0">Spotify Home Test</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
