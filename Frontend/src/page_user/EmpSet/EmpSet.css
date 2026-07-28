@@ -1,0 +1,163 @@
+/* CSS สำหรับหน้าจอแบบฟอร์มปฏิบัติงานและลางาน */
+.work-schedule-container {
+  font-family: 'Prompt', sans-serif;
+  background: linear-gradient(135deg, #fff5e6, #ffe6ff);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 1000px;
+  margin: 30px auto;
+}
+
+h1 {
+  text-align: center;
+  font-size: 28px;
+  color: #ff6699;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 24px;
+  color: #ff66cc;
+  margin-bottom: 15px;
+}
+
+.form-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.form-section {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  min-width: 300px;
+}
+
+label {
+  display: block;
+  font-size: 16px;
+  color: #333333;
+  margin-bottom: 5px;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+button {
+  background-color: #ff99cc;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+  background-color: #ff6699;
+  transform: scale(1.1);
+}
+
+.submit-status {
+  text-align: center;
+  color: #3366cc;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+/* ตารางงาน */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+thead {
+  background-color: #ffe6ff;
+}
+
+thead th {
+  font-size: 16px;
+  color: #ff66cc;
+  padding: 10px;
+  text-align: left;
+  border-bottom: 2px solid #ffccff;
+}
+
+tbody td {
+  font-size: 14px;
+  color: #333333;
+  padding: 10px;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.close-modal-btn {
+  background-color: #cccccc;
+  color: #333333;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+
+.close-modal-btn:hover {
+  background-color: #999999;
+}
+
+.leave-request-btn {
+  background-color: #ffcc99;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.leave-request-btn:hover {
+  background-color: #ff9966;
+}
+
+.ngantchoose{
+  margin-top: 20px;
+}

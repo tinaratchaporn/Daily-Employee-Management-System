@@ -1,0 +1,103 @@
+/* กำหนดความกว้างสูงสุดของ container */
+.about-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #ff9a8b, #ff6a88, #ff4365);
+    border-radius: 15px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* ตั้งชื่อหัวข้อให้โดดเด่น */
+  .about-title {
+    font-size: 3rem;
+    color: white;
+    margin-bottom: 30px;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* สไตล์สำหรับแต่ละ developer */
+  .developer {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    gap: 50px;
+    flex-wrap: wrap;
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  /* กล่องข้อมูลของ developer */
+  .developer-info {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    width: 250px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* เมื่อ hover กล่องข้อมูลจะขยาย */
+  .developer-info:hover {
+    transform: translateY(-10px);
+  }
+  
+  /* ปรับขนาดรูปภาพให้ดูน่ารัก */
+  .developer-img {
+    width: 120px;
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .developer-img:hover {
+    transform: scale(1.1);
+  }
+  
+  /* ชื่อ developer */
+  .developer-name {
+    font-size: 1.5rem;
+    color: #ff4365;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-family: 'Dancing Script', cursive;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* ข้อมูลการศึกษา */
+  .developer-course,
+  .developer-major {
+    font-size: 1rem;
+    color: #666;
+    margin: 5px 0;
+  }
+  
+  /* เพิ่มแอนิเมชั่น fadeIn */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* ปรับการแสดงผลให้สวยงามเมื่อหน้าจอเล็กลง */
+  @media screen and (max-width: 768px) {
+    .developer {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .developer-info {
+      width: 80%;
+      margin-bottom: 20px;
+    }
+  }
+  

@@ -1,0 +1,112 @@
+/* ให้ html และ body ครอบคลุมความสูงเต็มหน้าจอ */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%; /* ทำให้ html และ body ครอบคลุมหน้าจอทั้งหมด */
+  font-family: 'Arial', sans-serif;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 0fr 5fr; /* ความกว้างของ Sidebar และ Content */
+  grid-template-areas: "sidebar body"; 
+  height: 100vh; /* ทำให้ layout ครอบคลุมหน้าจอทั้งหมด */
+}
+
+.sidebar {
+  grid-area: sidebar;
+  min-height: 100vh; /* ใช้ min-height เพื่อให้ sidebar เต็มหน้าจอ */
+  width: 250px;
+  background-color: #231f20;
+  
+}
+
+/* ส่วนโลโก้ */
+.sidebar-top {
+  text-align: center;
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logo img {
+  max-width: 80%;
+  border-radius: 10px;
+}
+
+.sidebar-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #f8f9fa;
+}
+
+/* เมนู Sidebar */
+.sidebar-menu {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  gap: 10px;
+}
+
+.sidebar-menu a {
+  text-decoration: none;
+  color: white;
+}
+
+.sidebar-menu button {
+  background: none;
+  border: none;
+  color: white;
+  text-align: left;
+  width: 100%;
+  padding: 15px 20px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar-menu button:hover {
+  background-color: #495057;
+}
+
+.sidebar-menu .bi {
+  font-size: 1.2rem;
+  margin-right: 10px;
+}
+
+.sidebar-footer button:hover {
+  color: #adb5bd;
+}
+
+.sidebar-footer .bi {
+  font-size: 1.5rem;
+  margin-right: 10px;
+}
+
+/* รองรับหน้าจอขนาดเล็ก */
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr; /* Sidebar เต็มความกว้าง */
+    grid-template-areas: 
+      "sidebar"
+      "body";
+  }
+
+  .sidebar {
+    width: 100%;
+    min-height: 100vh; /* ให้ Sidebar เต็มความสูง */
+  }
+
+  .sidebar-menu button {
+    font-size: 0.9rem;
+    padding: 10px 15px;
+  }
+
+  .sidebar-footer button {
+    font-size: 0.9rem;
+  }
+}
