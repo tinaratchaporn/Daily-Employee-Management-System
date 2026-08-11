@@ -1,93 +1,199 @@
 import "./WorkingS.css";
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 
+const API_URL =
+  "http://localhost:9000/api/chooseworks/getempinfoForworkDays";
+
 function WorkingS() {
-  const [employees, setEmployees] = useState([]); // เก็บข้อมูลพนักงานทั้งหมด
-  const [filteredEmployees, setFilteredEmployees] = useState([]); // เก็บข้อมูลพนักงานที่กรองตามชื่อ
-  const [searchTerm, setSearchTerm] = useState(""); // เก็บคำค้นหาจากผู้ใช้
+  const [employees, setEmployees] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const loadEmployees = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const { data } = await axios.get(API_URL);
+
+      const employeeData = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.data)
+          ? data.data
+          : [];
+
+      setEmployees(
+        employeeData.filter(
+          (employee) => !employee.role || employee.role === "Employee"
+        )
+      );
+    } catch (requestError) {
+      console.error("Error fetching working status:", requestError);
+      setError("ไม่สามารถโหลดข้อมูลการทำงานได้ กรุณาลองใหม่อีกครั้ง");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // ดึงข้อมูลพนักงานจาก API
-    const fetchEmployees = async () => {
-      try {
-        const response = await axios.get("http://localhost:9000/api/data/getempinfoForworkDays");
-        if (response.data && Array.isArray(response.data.data)) {
-          // ตรวจสอบข้อมูลทั้งหมดที่ได้รับ
-          console.log(response.data.data); // เพิ่มการตรวจสอบค่าจาก API
-
-          setEmployees(response.data.data);  // เก็บข้อมูลทั้งหมดจาก API ที่กรองแล้ว
-          setFilteredEmployees(response.data.data); // กำหนดข้อมูลทั้งหมดให้เป็นค่าต้นฉบับ
-        } else {
-          console.error("Invalid response format");
-        }
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-      }
-    };
-
-    fetchEmployees();
+    loadEmployees();
   }, []);
 
-  // ฟังก์ชันสำหรับค้นหาพนักงาน
-  const handleSearch = (e) => {
-    const searchValue = e.target.value.toLowerCase();
-    setSearchTerm(searchValue);
+  const filteredEmployees = useMemo(() => {
+    const keyword = searchTerm.trim().toLowerCase();
 
-    // ค้นหาพนักงานที่มีชื่อที่ตรงกับคำค้นหา
-    const filtered = employees.filter((employee) =>
-      employee.name.toLowerCase().includes(searchValue)
+    if (!keyword) return employees;
+
+    return employees.filter((employee) =>
+      [employee.name, employee.department, employee.username]
+        .filter(Boolean)
+        .some((value) => value.toLowerCase().includes(keyword))
     );
-    setFilteredEmployees(filtered); // อัปเดตข้อมูลที่กรอง
+  }, [employees, searchTerm]);
+
+  const formatValue = (value, suffix = "") => {
+    if (value === undefined || value === null || value === "") return "-";
+    return `${value}${suffix}`;
+  };
+
+  const formatEarnings = (value) => {
+    if (
+      value === undefined ||
+      value === null ||
+      value === "" ||
+      Number.isNaN(Number(value))
+    ) {
+      return "-";
+    }
+
+    return `${Number(value).toLocaleString("th-TH")} บาท`;
   };
 
   return (
-    <div className="WorkingS-container">
-      <div className="daily-contract-container">
-        <h1>จำนวนชั่วโมงทำงานและรายได้</h1>
-
-        {/* ฟอร์มค้นหาพนักงาน */}
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="ค้นหาชื่อพนักงาน"
-            value={searchTerm}
-            onChange={handleSearch}
-            className="search-input"
-          />
+    <main className="working-status-page">
+      <section className="working-status-header">
+        <div>
+          <p className="working-status-eyebrow">WORKMATE ADMINISTRATION</p>
+          <h1>สถานะการทำงาน</h1>
+          <p>ตรวจสอบชั่วโมงทำงาน วันทำงาน และรายได้ของพนักงาน</p>
         </div>
 
-        {/* ตารางข้อมูลพนักงาน */}
-        <table className="daily-contract-table">
-          <thead>
-            <tr>
-              <th>ชื่อพนักงาน</th>
-              <th>แผนก</th>
-              <th>ชั่วโมงทำงาน</th>
-              <th>วันทำงาน</th>
-              <th>รายได้</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Array.isArray(filteredEmployees) && filteredEmployees.length > 0 ? (
-              filteredEmployees.map((employee) => (
-                <tr key={employee.username}>
-                  <td>{employee.name}</td>
-                  <td>{employee.department || "-"}</td>
-                  <td>{employee.hrs || "-"}</td>
-                  <td>{employee.workday || "-"}</td>
-                  <td>{employee.earnings !== "NaN" ? `${employee.earnings} บาท` : "-"}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5">ไม่พบข้อมูล</td>
-              </tr>
+        <button
+          type="button"
+          className="working-refresh-button"
+          onClick={loadEmployees}
+          disabled={loading}
+        >
+          {loading ? "กำลังโหลด..." : "รีเฟรชข้อมูล"}
+        </button>
+      </section>
+
+      <section className="working-summary-grid">
+        <article className="working-summary-card">
+          <span>พนักงานทั้งหมด</span>
+          <strong>{employees.length}</strong>
+          <small>คน</small>
+        </article>
+
+        <article className="working-summary-card">
+          <span>ชั่วโมงทำงานรวม</span>
+          <strong>
+            {employees.reduce(
+              (total, employee) => total + (Number(employee.hrs) || 0),
+              0
             )}
-          </tbody>
-        </table>
-      </div>
-    </div>
+          </strong>
+          <small>ชั่วโมง</small>
+        </article>
+
+        <article className="working-summary-card">
+          <span>วันทำงานรวม</span>
+          <strong>
+            {employees.reduce(
+              (total, employee) => total + (Number(employee.workday) || 0),
+              0
+            )}
+          </strong>
+          <small>วัน</small>
+        </article>
+      </section>
+
+      <section className="working-table-card">
+        <div className="working-table-toolbar">
+          <div>
+            <h2>ข้อมูลการทำงานของพนักงาน</h2>
+            <p>แสดง {filteredEmployees.length} รายการ</p>
+          </div>
+
+          <label className="working-search">
+            <span>⌕</span>
+            <input
+              type="search"
+              placeholder="ค้นหาชื่อ แผนก หรือชื่อผู้ใช้"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+            />
+          </label>
+        </div>
+
+        {error && <div className="working-error">{error}</div>}
+
+        <div className="working-table-wrapper">
+          <table className="working-table">
+            <thead>
+              <tr>
+                <th>พนักงาน</th>
+                <th>แผนก</th>
+                <th>ชั่วโมงทำงาน</th>
+                <th>วันทำงาน</th>
+                <th>รายได้</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="5" className="working-empty-state">
+                    กำลังโหลดข้อมูล...
+                  </td>
+                </tr>
+              ) : filteredEmployees.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="working-empty-state">
+                    ไม่พบข้อมูลพนักงาน
+                  </td>
+                </tr>
+              ) : (
+                filteredEmployees.map((employee) => (
+                  <tr key={employee._id || employee.username}>
+                    <td>
+                      <div className="working-employee">
+                        <div className="working-avatar">
+                          {(employee.name || "?").charAt(0).toUpperCase()}
+                        </div>
+
+                        <div>
+                          <strong>{employee.name || "-"}</strong>
+                          <span>{employee.username || "-"}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{employee.department || "-"}</td>
+                    <td>{formatValue(employee.hrs, " ชั่วโมง")}</td>
+                    <td>{formatValue(employee.workday, " วัน")}</td>
+                    <td className="working-earnings">
+                      {formatEarnings(employee.earnings)}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
   );
 }
 

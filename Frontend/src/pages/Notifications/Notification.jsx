@@ -1,333 +1,281 @@
 import "./Notification.css";
 import { useEffect, useState } from "react";
+import axios from "axios";
+
+const API_URL = "http://localhost:9000/api";
+
+const getItems = (data) => {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.data)) return data.data;
+  return [];
+};
+
+const formatDate = (date) => {
+  if (!date) return "-";
+
+  const value = new Date(date);
+
+  return Number.isNaN(value.getTime())
+    ? "-"
+    : value.toLocaleDateString("th-TH", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+};
+
+const isPending = (status) =>
+  String(status || "Pending").toLowerCase() === "pending";
 
 function Notification() {
-  const [leaveRequests, setLeaveRequests] = useState([]); // เก็บข้อมูลคำขอลางาน
-  const [workSchedules, setWorkSchedules] = useState([]); // เก็บข้อมูลการลงงาน
-  const [loading, setLoading] = useState(true); // สถานะการโหลดข้อมูล
+  const [leaveRequests, setLeaveRequests] = useState([]);
+  const [workSchedules, setWorkSchedules] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [updatingId, setUpdatingId] = useState("");
+  const [message, setMessage] = useState({ type: "", text: "" });
+
+  const loadData = async () => {
+    setLoading(true);
+    setMessage({ type: "", text: "" });
+
+    try {
+      const [leaves, works] = await Promise.all([
+        axios.get(`${API_URL}/leaves`),
+        axios.get(`${API_URL}/chooseworks`),
+      ]);
+
+      setLeaveRequests(getItems(leaves.data));
+      setWorkSchedules(getItems(works.data));
+    } catch (error) {
+      console.error(error);
+      setMessage({
+        type: "error",
+        text: "ไม่สามารถโหลดข้อมูลคำขอได้ กรุณาลองใหม่อีกครั้ง",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // ดึงข้อมูลคำขอลางาน
-    fetch("http://localhost:9000/api/data/getLeaveRequests")
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Leave Requests:", data); // เพิ่มการ log ข้อมูล
-        setLeaveRequests(data); // ตั้งค่าข้อมูลคำขอลางาน
-      })
-      .catch((error) => {
-        console.error("Error fetching leave requests:", error);
-      });
-
-    // ดึงข้อมูลการลงงานจาก API
-    fetch("http://localhost:9000/api/data/getChoosework")
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Work Schedules:", data); // เพิ่มการ log ข้อมูล
-        setWorkSchedules(data); // ตั้งค่าข้อมูลการลงงาน
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching work schedules:", error);
-        setLoading(false);
-      });
+    loadData();
   }, []);
 
-  // ฟังก์ชันสำหรับการส่งการแจ้งเตือน
-  const sendNotification = (notification) => {
-    fetch("http://localhost:9000/api/data/createNotification", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(notification),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          console.log("Notification sent successfully");
-        } else {
-          console.error("Failed to send notification");
-        }
-      })
-      .catch((error) => {
-        console.error("Error sending notification:", error);
-      });
-  };
+  const updateStatus = async (type, item, status) => {
+    const endpoint = type === "leave" ? "leaves" : "chooseworks";
 
-  // ฟังก์ชันอนุมัติคำขอ
-  const handleApprove = (leaveRequestusername) => {
-    fetch(
-      `http://localhost:9000/api/data/updateLeaveRequest/${leaveRequestusername}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: "Approved" }),
+    setUpdatingId(item._id);
+    setMessage({ type: "", text: "" });
+
+    try {
+      await axios.put(`${API_URL}/${endpoint}/${item._id}`, { status });
+
+      try {
+        await axios.post(`${API_URL}/notifications`, {
+          username: item.username,
+          date: item.date,
+          type: type === "leave" ? item.type || "Leave request" : "Work schedule",
+          status,
+        });
+      } catch (notificationError) {
+        console.error(notificationError);
       }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          alert("คำขอได้รับการอนุมัติแล้ว");
-          // อัปเดตคำขอใน state
-          setLeaveRequests((prev) =>
-            prev.map((request) =>
-              request._id === leaveRequestusername
-                ? { ...request, status: "Approved" }
-                : request
-            )
-          );
 
-          // สร้างการแจ้งเตือน
-          const notification = {
-            username: data.request.username,
-            date: data.request.date,
-            type: data.request.type,
-            status: "Approved",
-          };
+      const updateItems = (items) =>
+        items.map((request) =>
+          request._id === item._id ? { ...request, status } : request
+        );
 
-          sendNotification(notification);
-        } else {
-          alert("เกิดข้อผิดพลาดในการอนุมัติคำขอ");
-        }
-      })
-      .catch((error) => {
-        console.error("Error approving leave request:", error);
-      });
-  };
-
-  // ฟังก์ชันปฏิเสธคำขอ
-  const handleReject = (leaveRequestusername) => {
-    fetch(
-      `http://localhost:9000/api/data/updateLeaveRequest/${leaveRequestusername}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: "Rejected" }),
+      if (type === "leave") {
+        setLeaveRequests(updateItems);
+      } else {
+        setWorkSchedules(updateItems);
       }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          alert("คำขอได้รับการปฏิเสธแล้ว");
-          // อัปเดตคำขอใน state
-          setLeaveRequests((prev) =>
-            prev.map((request) =>
-              request._id === leaveRequestusername
-                ? { ...request, status: "Rejected" }
-                : request
-            )
-          );
 
-          // สร้างการแจ้งเตือน
-          const notification = {
-            username: data.request.username,
-            date: data.request.date,
-            type: data.request.type,
-            status: "Rejected",
-          };
-
-          sendNotification(notification);
-        } else {
-          alert("เกิดข้อผิดพลาดในการปฏิเสธคำขอ");
-        }
-      })
-      .catch((error) => {
-        console.error("Error rejecting leave request:", error);
+      setMessage({
+        type: "success",
+        text: status === "Approved" ? "อนุมัติเรียบร้อยแล้ว" : "ปฏิเสธเรียบร้อยแล้ว",
       });
+    } catch (error) {
+      console.error(error);
+      setMessage({
+        type: "error",
+        text: "ไม่สามารถอัปเดตสถานะได้ กรุณาลองใหม่อีกครั้ง",
+      });
+    } finally {
+      setUpdatingId("");
+    }
   };
 
-  // ฟังก์ชันอนุมัติการลงงาน
-  const handleApproveWork = (workScheduleId) => {
-    fetch(`http://localhost:9000/api/data/updatestatuswork/${workScheduleId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status: "Approved" }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          alert("Work schedule has been approved");
+  const statusBadge = (status) => {
+    const value = status || "Pending";
 
-          // Update the work schedule in the state
-          setWorkSchedules((prev) =>
-            prev.map((schedule) =>
-              schedule._id === workScheduleId
-                ? { ...schedule, status: "Approved" }
-                : schedule
-            )
-          );
-
-          // Create a notification for approval
-          const notification = {
-            username: data.schedule.username,
-            date: data.schedule.date,
-            type: "Work Schedule",
-            status: "Approved",
-          };
-
-          sendNotification(notification);
-        } else {
-          alert("Error approving the work schedule");
-        }
-      })
-      .catch((error) => {
-        console.error("Error approving work schedule:", error);
-      });
+    return (
+      <span className={`notification-status ${value.toLowerCase()}`}>
+        {value === "Approved"
+          ? "อนุมัติแล้ว"
+          : value === "Rejected"
+            ? "ปฏิเสธแล้ว"
+            : "รออนุมัติ"}
+      </span>
+    );
   };
 
-  // ฟังก์ชันปฏิเสธการลงงาน
-  const handleRejectWork = (workScheduleId) => {
-    fetch(`http://localhost:9000/api/data/updatestatuswork/${workScheduleId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status: "Rejected" }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          alert("Work schedule has been rejected");
+  const actions = (type, item) => {
+    if (!isPending(item.status)) return <span className="notification-dash">-</span>;
 
-          // Update the work schedule in the state
-          setWorkSchedules((prev) =>
-            prev.map((schedule) =>
-              schedule._id === workScheduleId
-                ? { ...schedule, status: "Rejected" }
-                : schedule
-            )
-          );
+    const isUpdating = updatingId === item._id;
 
-          // Create a notification for rejection
-          const notification = {
-            username: data.schedule.username,
-            date: data.schedule.date,
-            type: "Work Schedule",
-            status: "Rejected",
-          };
+    return (
+      <div className="notification-actions">
+        <button
+          type="button"
+          className="notification-approve-button"
+          disabled={isUpdating}
+          onClick={() => updateStatus(type, item, "Approved")}
+        >
+          อนุมัติ
+        </button>
 
-          sendNotification(notification);
-        } else {
-          alert("Error rejecting the work schedule");
-        }
-      })
-      .catch((error) => {
-        console.error("Error rejecting work schedule:", error);
-      });
+        <button
+          type="button"
+          className="notification-reject-button"
+          disabled={isUpdating}
+          onClick={() => updateStatus(type, item, "Rejected")}
+        >
+          ปฏิเสธ
+        </button>
+      </div>
+    );
   };
 
-  // แสดงผลลัพธ์
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const pendingCount = [...leaveRequests, ...workSchedules].filter((item) =>
+    isPending(item.status)
+  ).length;
 
   return (
-    <div className="notification">
-      <div className="leave-requests">
-        <div className="card text-center">
-          <div className="card-body">
-            <h5 className="card-title">คำขอลางาน</h5>
-            <div className="scrollable-content">
-              <table>
-                <thead>
-                  <tr>
-                    <th>ลำดับ</th>
-                    <th>ชื่อพนักงาน</th>
-                    <th>ประเภทการลา</th>
-                    <th>วันที่ขอลา</th>
-                    <th>สถานะ</th>
-                    <th>การดำเนินการ</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {leaveRequests.length > 0 ? (
-                    leaveRequests.map((item, index) => (
-                      <tr key={item._id}>
-                        <td>{index + 1}</td>
-                        <td>{item.username}</td>
-                        <td>{item.type}</td>
-                        <td>
-                          {new Date(item.date).toLocaleDateString("th-TH")}
-                        </td>
-                        <td>{item.status}</td>
-                        <td>
-                          {item.status === "Pending" && (
-                            <>
-                              <button
-                                className="btn btn-primary btn-sm"
-                                onClick={() => handleApprove(item._id)}
-                              >
-                                อนุมัติ
-                              </button>
-                              <button
-                                className="btn btn-danger btn-sm"
-                                onClick={() => handleReject(item._id)}
-                              >
-                                ปฏิเสธ
-                              </button>
-                            </>
-                          )}
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="6">ไม่มีข้อมูลคำขอลางาน</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+    <main className="notification-page">
+      <section className="notification-page-header">
+        <div>
+          <p className="notification-eyebrow">WORKMATE ADMINISTRATION</p>
+          <h1>คำขอและการแจ้งเตือน</h1>
+          <p>ตรวจสอบและดำเนินการคำขอจากพนักงาน</p>
         </div>
-      </div>
 
-      <div className="work-schedules">
-        <div className="card text-center">
-          <div className="card-body">
-            <h5 className="card-title">การลงงาน</h5>
-            <div className="scrollable-content">
-              <table>
-                <thead>
-                  <tr>
-                    <th>ลำดับ</th>
-                    <th>ชื่อพนักงาน</th>
-                    <th>วันที่ลงงาน</th>
-                    <th>สถานะ</th>
-                   
-                  </tr>
-                </thead>
-                <tbody>
-                  {workSchedules.length > 0 ? (
-                    workSchedules.map((item, index) => (
-                      <tr key={item._id}>
-                        <td>{index + 1}</td>
-                        <td>{item.username}</td>
-                        <td>
-                          {new Date(item.date).toLocaleDateString("th-TH")}
-                        </td>
-                        <td>{item.status}</td>
-                        
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="5">ไม่มีข้อมูลการลงงาน</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+        <button
+          type="button"
+          className="notification-refresh-button"
+          onClick={loadData}
+          disabled={loading}
+        >
+          {loading ? "กำลังโหลด..." : "รีเฟรชข้อมูล"}
+        </button>
+      </section>
+
+      <section className="notification-summary">
+        <div>
+          <span>คำขอลางาน</span>
+          <strong>{leaveRequests.length}</strong>
+          <small>รายการ</small>
+        </div>
+
+        <div>
+          <span>รายการลงงาน</span>
+          <strong>{workSchedules.length}</strong>
+          <small>รายการ</small>
+        </div>
+
+        <div>
+          <span>รอดำเนินการ</span>
+          <strong>{pendingCount}</strong>
+          <small>รายการ</small>
+        </div>
+      </section>
+
+      {message.text && (
+        <div className={`notification-message ${message.type}`}>
+          {message.text}
+        </div>
+      )}
+
+      <section className="notification-content-card">
+        <div className="notification-section-heading">
+          <div>
+            <h2>คำขอลางาน</h2>
+            <p>รายการคำขอลางานจากพนักงาน</p>
+          </div>
+          <span className="notification-count">{leaveRequests.length} รายการ</span>
+        </div>
+
+        <div className="notification-list-wrapper">
+          <div className="notification-list leave-list">
+            <div className="notification-list-row notification-list-head">
+              <span>ลำดับ</span>
+              <span>พนักงาน</span>
+              <span>ประเภทการลา</span>
+              <span>วันที่ขอลา</span>
+              <span>สถานะ</span>
+              <span>จัดการ</span>
             </div>
+
+            {loading ? (
+              <div className="notification-list-empty">กำลังโหลดข้อมูล...</div>
+            ) : leaveRequests.length === 0 ? (
+              <div className="notification-list-empty">ไม่มีข้อมูลคำขอลางาน</div>
+            ) : (
+              leaveRequests.map((item, index) => (
+                <div className="notification-list-row" key={item._id || index}>
+                  <span>{index + 1}</span>
+                  <span>{item.username || "-"}</span>
+                  <span>{item.type || "-"}</span>
+                  <span>{formatDate(item.date)}</span>
+                  <span>{statusBadge(item.status)}</span>
+                  <span>{actions("leave", item)}</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+
+      <section className="notification-content-card">
+        <div className="notification-section-heading">
+          <div>
+            <h2>รายการลงงาน</h2>
+            <p>รายการบันทึกการลงงานจากพนักงาน</p>
+          </div>
+          <span className="notification-count">{workSchedules.length} รายการ</span>
+        </div>
+
+        <div className="notification-list-wrapper">
+          <div className="notification-list work-list">
+            <div className="notification-list-row notification-list-head">
+              <span>ลำดับ</span>
+              <span>พนักงาน</span>
+              <span>วันที่ลงงาน</span>
+              <span>สถานะ</span>
+              <span>จัดการ</span>
+            </div>
+
+            {loading ? (
+              <div className="notification-list-empty">กำลังโหลดข้อมูล...</div>
+            ) : workSchedules.length === 0 ? (
+              <div className="notification-list-empty">ไม่มีข้อมูลการลงงาน</div>
+            ) : (
+              workSchedules.map((item, index) => (
+                <div className="notification-list-row" key={item._id || index}>
+                  <span>{index + 1}</span>
+                  <span>{item.username || "-"}</span>
+                  <span>{formatDate(item.date)}</span>
+                  <span>{statusBadge(item.status)}</span>
+                  <span>{actions("work", item)}</span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
 

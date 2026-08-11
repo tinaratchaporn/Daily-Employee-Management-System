@@ -2,129 +2,193 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./EmpNoti.css";
 
+const API_URL = "http://localhost:9000/api/notifications";
+
+const getAuthConfig = () => ({
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+});
+
+const getItems = (data) => {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.data)) return data.data;
+  return [];
+};
+
+const formatDate = (date) => {
+  if (!date) return "-";
+
+  const value = new Date(date);
+
+  return Number.isNaN(value.getTime())
+    ? "-"
+    : value.toLocaleDateString("th-TH", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+};
+
 function EmpNoti() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState("");
+  const [message, setMessage] = useState({ type: "", text: "" });
 
-  // ดึงข้อมูลการแจ้งเตือน
-  useEffect(() => {
-    fetch("http://localhost:9000/api/data/getNotification")
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Fetched Notifications:", data);
-        setNotifications(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching notifications:", error);
-        setLoading(false);
+  const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+
+  const loadNotifications = async () => {
+    if (!storedUser?.username) {
+      setLoading(false);
+      setMessage({
+        type: "error",
+        text: "ไม่พบข้อมูลผู้ใช้งาน กรุณาเข้าสู่ระบบใหม่",
       });
+      return;
+    }
+
+    setLoading(true);
+    setMessage({ type: "", text: "" });
+
+    try {
+      const { data } = await axios.get(`${API_URL}/employee`, {
+        ...getAuthConfig(),
+        params: { username: storedUser.username },
+      });
+
+      setNotifications(getItems(data));
+    } catch (error) {
+      console.error(error);
+      setMessage({
+        type: "error",
+        text: "ไม่สามารถโหลดการแจ้งเตือนได้",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadNotifications();
   }, []);
 
-  // ฟังก์ชันสำหรับอัปเดตสถานะการแจ้งเตือน
-  const handleApproval = async (notificationId, newStatus) => {
-    try {
-      const response = await axios.put(
-        `http://localhost:9000/api/data/updateNotification/${notificationId}`,
-        { status: newStatus }
-      );
-
-      if (response.data.success) {
-        setNotifications((prevNotifications) =>
-          prevNotifications.map((notif) =>
-            notif._id === notificationId
-              ? { ...notif, status: newStatus }
-              : notif
-          )
-        );
-        console.log("Notification status updated successfully");
-      } else {
-        console.error("Failed to update notification status");
-      }
-    } catch (error) {
-      console.error("Error updating notification:", error);
-    }
-  };
-
-  // ฟังก์ชันสำหรับลบการแจ้งเตือน
   const handleDelete = async (notificationId) => {
+    if (!window.confirm("ต้องการลบการแจ้งเตือนนี้ใช่หรือไม่?")) {
+      return;
+    }
+
+    setDeletingId(notificationId);
+
     try {
-      const response = await axios.delete(
-        `http://localhost:9000/api/data/deleteNotification/${notificationId}`
+      await axios.delete(`${API_URL}/${notificationId}`, getAuthConfig());
+
+      setNotifications((previous) =>
+        previous.filter((notification) => notification._id !== notificationId)
       );
-      if (response.data.success) {
-        // ลบการแจ้งเตือนจาก state
-        setNotifications((prevNotifications) =>
-          prevNotifications.filter((notif) => notif._id !== notificationId)
-        );
-        console.log("Notification deleted successfully");
-      } else {
-        console.error("Failed to delete notification", response.data);
-      }
+
+      setMessage({
+        type: "success",
+        text: "ลบการแจ้งเตือนเรียบร้อยแล้ว",
+      });
     } catch (error) {
-      console.error("Error deleting notification:", error.response?.data || error.message);
+      console.error(error);
+      setMessage({
+        type: "error",
+        text: "ไม่สามารถลบการแจ้งเตือนได้",
+      });
+    } finally {
+      setDeletingId("");
     }
   };
 
-  if (loading) {
-    return <div className="loading">กำลังโหลดการแจ้งเตือน...</div>;
-  }
+  const getStatusLabel = (status) => {
+    if (status === "Approved") return "อนุมัติแล้ว";
+    if (status === "Rejected") return "ปฏิเสธแล้ว";
+    return "รอดำเนินการ";
+  };
 
   return (
-    <div className="EmpNoti-container">
-      <h1>การแจ้งเตือน</h1>
-      {notifications.length === 0 ? (
-        <p>ไม่มีการแจ้งเตือน</p>
-      ) : (
-        <table className="notification-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>วันที่</th>
-              <th>ประเภทการลา</th>
-              <th>สถานะ</th>
-              <th>เหตุผล</th>
-              <th>การดำเนินการ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {notifications.map((notif, index) => (
-              <tr key={notif._id} className={`status-${notif.status?.toLowerCase()}`}>
-                <td>{index + 1}</td>
-                <td>{new Date(notif.date).toLocaleDateString("th-TH")}</td>
-                <td>{notif.type}</td>
-                <td>
-                  <span
-                    className={
-                      notif.status === "Approved"
-                        ? "status-approved"
-                        : notif.status === "Rejected"
-                        ? "status-rejected"
-                        : "status-pending"
-                    }
-                  >
-                    {notif.status === "Approved"
-                      ? "อนุมัติ"
-                      : notif.status === "Rejected"
-                      ? "ปฏิเสธ"
-                      : "รอดำเนินการ"}
-                  </span>
-                </td>
-                <td>{notif.reason || "ไม่มีเหตุผลระบุ"}</td>
-                <td>
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => handleDelete(notif._id)} // เรียกฟังก์ชันลบ
-                  >
-                    ลบ
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <main className="emp-noti-page">
+      <section className="emp-noti-header-card">
+        <div>
+          <p className="emp-noti-eyebrow">WORKMATE EMPLOYEE</p>
+          <h1>การแจ้งเตือนของฉัน</h1>
+          <p>ติดตามสถานะคำขอลาและรายการลงงานของคุณ</p>
+        </div>
+
+        <button
+          type="button"
+          className="emp-noti-refresh-button"
+          onClick={loadNotifications}
+          disabled={loading}
+        >
+          {loading ? "กำลังโหลด..." : "รีเฟรช"}
+        </button>
+      </section>
+
+      {message.text && (
+        <div className={`emp-noti-message ${message.type}`}>
+          {message.text}
+        </div>
       )}
-    </div>
+
+      <section className="emp-noti-content-card">
+        <div className="emp-noti-content-heading">
+          <div>
+            <h2>รายการแจ้งเตือน</h2>
+            <p>ทั้งหมด {notifications.length} รายการ</p>
+          </div>
+
+          <span className="emp-noti-count">{notifications.length} รายการ</span>
+        </div>
+
+        <div className="emp-noti-list-wrapper">
+          <div className="emp-noti-list">
+            <div className="emp-noti-row emp-noti-list-head">
+              <span>วันที่</span>
+              <span>ประเภท</span>
+              <span>รายละเอียด</span>
+              <span>สถานะ</span>
+              <span>จัดการ</span>
+            </div>
+
+            {loading ? (
+              <div className="emp-noti-empty">กำลังโหลดการแจ้งเตือน...</div>
+            ) : notifications.length === 0 ? (
+              <div className="emp-noti-empty">ไม่มีการแจ้งเตือน</div>
+            ) : (
+              notifications.map((notification) => (
+                <div className="emp-noti-row" key={notification._id}>
+                  <span>{formatDate(notification.date)}</span>
+                  <span>{notification.type || "-"}</span>
+                  <span>{notification.reason || notification.message || "-"}</span>
+                  <span>
+                    <span
+                      className={`emp-noti-status ${String(
+                        notification.status || "Pending"
+                      ).toLowerCase()}`}
+                    >
+                      {getStatusLabel(notification.status)}
+                    </span>
+                  </span>
+                  <span>
+                    <button
+                      type="button"
+                      className="emp-noti-delete-button"
+                      onClick={() => handleDelete(notification._id)}
+                      disabled={deletingId === notification._id}
+                    >
+                      {deletingId === notification._id ? "กำลังลบ..." : "ลบ"}
+                    </button>
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
 

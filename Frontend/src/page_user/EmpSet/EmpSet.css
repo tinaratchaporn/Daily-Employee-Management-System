@@ -1,163 +1,346 @@
-/* CSS สำหรับหน้าจอแบบฟอร์มปฏิบัติงานและลางาน */
-.work-schedule-container {
-  font-family: 'Prompt', sans-serif;
-  background: linear-gradient(135deg, #fff5e6, #ffe6ff);
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  width: 1000px;
-  margin: 30px auto;
+.emp-set-page {
+  min-height: 100%;
+  padding: 32px;
+  background: #f8fafc;
+  color: #1e293b;
 }
 
-h1 {
-  text-align: center;
-  font-size: 28px;
-  color: #ff6699;
-  margin-bottom: 20px;
-}
-
-h2 {
-  font-size: 24px;
-  color: #ff66cc;
-  margin-bottom: 15px;
-}
-
-.form-container {
+.emp-set-header-card,
+.emp-card-heading,
+.emp-modal-heading,
+.emp-modal-actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-between;
-}
-
-.form-section {
-  background-color: #ffffff;
-  border-radius: 10px;
-  padding: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  flex: 1;
-  min-width: 300px;
-}
-
-label {
-  display: block;
-  font-size: 16px;
-  color: #333333;
-  margin-bottom: 5px;
-}
-
-input, textarea, select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  margin-bottom: 15px;
-  font-size: 14px;
-}
-
-button {
-  background-color: #ff99cc;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-button:hover {
-  background-color: #ff6699;
-  transform: scale(1.1);
-}
-
-.submit-status {
-  text-align: center;
-  color: #3366cc;
-  font-weight: bold;
-  margin-top: 20px;
-}
-
-/* ตารางงาน */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-thead {
-  background-color: #ffe6ff;
-}
-
-thead th {
-  font-size: 16px;
-  color: #ff66cc;
-  padding: 10px;
-  text-align: left;
-  border-bottom: 2px solid #ffccff;
-}
-
-tbody td {
-  font-size: 14px;
-  color: #333333;
-  padding: 10px;
-  border-bottom: 1px solid #f2f2f2;
-}
-
-tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.modal-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
+  justify-content: space-between;
+  gap: 20px;
 }
 
-.modal-content {
+.emp-set-header-card {
+  margin-bottom: 20px;
+  padding: 24px 26px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
   background: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 400px;
-  width: 90%;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
 }
 
-.close-modal-btn {
-  background-color: #cccccc;
-  color: #333333;
-  margin-top: 10px;
-  margin-left: 10px;
+.emp-set-eyebrow {
+  margin: 0 0 7px;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
 }
 
-.close-modal-btn:hover {
-  background-color: #999999;
+.emp-set-header-card h1,
+.emp-card-heading h2,
+.emp-modal-heading h2 {
+  margin: 0;
+  color: #1e293b;
 }
 
-.leave-request-btn {
-  background-color: #ffcc99;
-  color: #ffffff;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 8px;
+.emp-set-header-card h1 {
+  font-size: 27px;
+}
+
+.emp-set-header-card p:not(.emp-set-eyebrow),
+.emp-card-heading p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.emp-leave-button,
+.emp-submit-button,
+.emp-refresh-button,
+.emp-cancel-button,
+.emp-close-button {
+  border: 0;
+  font: inherit;
   cursor: pointer;
+  transition: 0.2s ease;
 }
 
-.leave-request-btn:hover {
-  background-color: #ff9966;
+.emp-leave-button,
+.emp-submit-button {
+  min-height: 42px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
 }
 
-.ngantchoose{
-  margin-top: 20px;
+.emp-leave-button:hover,
+.emp-submit-button:hover:not(:disabled) {
+  background: #1d4ed8;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
+}
+
+.emp-message {
+  margin-bottom: 20px;
+  padding: 13px 15px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.emp-message.success {
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.emp-message.error {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.emp-work-card,
+.emp-history-card {
+  overflow: hidden;
+  margin-bottom: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.05);
+}
+
+.emp-card-heading {
+  padding: 22px 25px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.emp-card-heading h2 {
+  font-size: 18px;
+}
+
+.emp-work-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  padding: 25px;
+}
+
+.emp-work-form label,
+.emp-leave-form label {
+  color: #334155;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.emp-work-form input,
+.emp-work-form textarea,
+.emp-leave-form input,
+.emp-leave-form textarea,
+.emp-leave-form select {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  outline: none;
+  background: #ffffff;
+  color: #1e293b;
+  font: inherit;
+  font-size: 14px;
+}
+
+.emp-work-form input,
+.emp-leave-form input,
+.emp-leave-form select {
+  height: 44px;
+  padding: 0 13px;
+}
+
+.emp-work-form textarea,
+.emp-leave-form textarea {
+  min-height: 105px;
+  padding: 12px 13px;
+  resize: vertical;
+}
+
+.emp-work-form input:focus,
+.emp-work-form textarea:focus,
+.emp-leave-form input:focus,
+.emp-leave-form textarea:focus,
+.emp-leave-form select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.emp-form-full,
+.emp-form-actions {
+  grid-column: 1 / -1;
+}
+
+.emp-form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.emp-refresh-button {
+  padding: 9px 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.emp-refresh-button:hover:not(:disabled) {
+  border-color: #93c5fd;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.emp-history-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.emp-history-list {
+  min-width: 760px;
+}
+
+.emp-history-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 2fr 1fr;
+  align-items: center;
+  min-height: 62px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #475569;
+  font-size: 14px;
+}
+
+.emp-history-row > span {
+  padding: 0 25px;
+}
+
+.emp-history-head {
+  min-height: 56px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.emp-history-row:not(.emp-history-head):hover {
+  background: #f8fbff;
+}
+
+.emp-history-empty {
+  padding: 44px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.emp-status {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.emp-status.pending {
+  color: #b45309;
+}
+
+.emp-status.approved {
+  color: #15803d;
+}
+
+.emp-status.rejected {
+  color: #dc2626;
+}
+
+.emp-modal-overlay {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.emp-modal {
+  width: 100%;
+  max-width: 540px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
+}
+
+.emp-modal-heading {
+  padding: 22px 25px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.emp-close-button {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.emp-leave-form {
+  display: grid;
+  gap: 18px;
+  padding: 25px;
+}
+
+.emp-modal-actions {
+  margin-top: 6px;
+}
+
+.emp-cancel-button {
+  min-height: 42px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.emp-submit-button:disabled,
+.emp-leave-button:disabled,
+.emp-refresh-button:disabled,
+.emp-cancel-button:disabled,
+.emp-close-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+@media (max-width: 700px) {
+  .emp-set-page {
+    padding: 20px 16px;
+  }
+
+  .emp-set-header-card,
+  .emp-card-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .emp-work-form {
+    grid-template-columns: 1fr;
+  }
+
+  .emp-form-full,
+  .emp-form-actions {
+    grid-column: auto;
+  }
+
+  .emp-form-actions {
+    justify-content: stretch;
+  }
+
+  .emp-submit-button {
+    width: 100%;
+  }
 }

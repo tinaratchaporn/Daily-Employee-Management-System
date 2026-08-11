@@ -3,7 +3,10 @@ import mongoose, { Schema } from 'mongoose';
 const EmpDetailsSchema: Schema = new Schema({
   userId: String,
   username: String,
-  password: String,
+  password: {
+    type: String,
+    required: true,
+  },
   name: String,
   department: String,
   phone: String,

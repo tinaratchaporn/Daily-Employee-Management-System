@@ -1,345 +1,506 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import "./Employees.css";
 
+const API_URL = "http://localhost:9000/api/employees";
+
+const getAuthConfig = () => ({
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+});
+
+const emptyEmployee = {
+  name: "",
+  username: "",
+  password: "",
+  department: "",
+  phone: "",
+  email: "",
+  userId: "",
+  role: "Employee",
+};
+
 function Employees() {
   const [employees, setEmployees] = useState([]);
-  const [showAddEmployee, setShowAddEmployee] = useState(false);
-  const [newEmployee, setNewEmployee] = useState({
-    name: "",
-    department: "",
-    phone: "",
-    email: "",
-    userId: "", // Add userId field for the Thai ID number
-  });
-
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [formData, setFormData] = useState(emptyEmployee);
+  const [editingEmployee, setEditingEmployee] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" });
 
   useEffect(() => {
-    initData(); // ดึงข้อมูลพนักงานเมื่อเริ่มต้น
+    loadEmployees();
   }, []);
-  
-  // ฟังก์ชันในการดึงข้อมูลพนักงานจากเซิร์ฟเวอร์
-  const initData = async () => {
-    try {
-      const response = await axios.get("http://localhost:9000/api/data/getEmployee");
-  
-      // กรองพนักงานที่มี role เป็น "Employee" เท่านั้น
-      const filteredEmployees = response.data.filter(employee => employee.role === "Employee");
-      
-      // อัปเดต state ของ employees ให้แสดงเฉพาะพนักงานที่มี role เป็น "Employee"
-      setEmployees(filteredEmployees); // อัปเดตข้อมูลใน state
-    } catch (error) {
-      console.error("Error fetching data:", error.message);
-    }
-  };
 
-  const handleShow = () => setShowAddEmployee(true);
-  const handleClose = () => {
-    setShowAddEmployee(false);
-    setNewEmployee({
-      name: "",
-      department: "",
-      phone: "",
-      email: "",
-      userId: "",
-    });
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-
-    if (name === "phone") {
-      // ตรวจสอบให้เป็นตัวเลขและยาวไม่เกิน 10 ตัว
-      if (/^\d*$/.test(value) && value.length <= 10) {
-        setNewEmployee((prevState) => ({ ...prevState, [name]: value })); // เก็บค่า phone เป็น string
-      }
-      return; // ออกจากฟังก์ชันหาก field คือ phone
-    }
-
-    if (name === "userId") {
-      // ตรวจสอบให้เป็นตัวเลขและยาวไม่เกิน 13 ตัว
-      if (/^\d*$/.test(value) && value.length <= 13) {
-        setNewEmployee((prevState) => ({ ...prevState, [name]: value }));
-      }
-      return;
-    }
-
-    // กรณีอื่นๆ
-    setNewEmployee((prevState) => ({ ...prevState, [name]: value }));
-  };
-
-  const handleAddEmployee = async (e) => {
-    e.preventDefault();
-
-    if (
-      !newEmployee.name ||
-      !newEmployee.department ||
-      !newEmployee.phone ||
-      !newEmployee.email ||
-      !newEmployee.userId
-    ) {
-      alert("Please fill out all fields.");
-      return;
-    }
+  const loadEmployees = async () => {
+    setLoading(true);
 
     try {
-      const response = await axios.post(
-        "http://localhost:9000/api/data/addEmployee",
-        newEmployee
-      );
-      setEmployees((prevEmployees) => [...prevEmployees, response.data]); // อัปเดตข้อมูลทันทีหลังจากเพิ่ม
-      handleClose();
+      const { data } = await axios.get(API_URL, getAuthConfig());
+
+      setEmployees(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error(
-        "Error adding employee:",
-        error.response ? error.response.data : error.message
-      );
-      alert("Error adding employee. Please try again.");
+      console.error(error);
+      setMessage({
+        type: "error",
+        text: "ไม่สามารถโหลดข้อมูลพนักงานได้",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleEditClick = (employee) => {
-    setSelectedEmployee(employee);
+  const openAddModal = () => {
+    setEditingEmployee(null);
+    setFormData(emptyEmployee);
+    setMessage({ type: "", text: "" });
     setIsModalOpen(true);
   };
 
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.put(
-        `http://localhost:9000/api/data/updateEmployee/${selectedEmployee._id}`,
-        selectedEmployee
-      );
-      const updatedEmployee = response.data;
+  const openEditModal = (employee) => {
+    setEditingEmployee(employee);
+    setFormData({
+      name: employee.name || "",
+      username: employee.username || "",
+      password: "",
+      department: employee.department || "",
+      phone: employee.phone || "",
+      email: employee.email || "",
+      userId: employee.userId || "",
+      role: "Employee",
+    });
+    setMessage({ type: "", text: "" });
+    setIsModalOpen(true);
+  };
 
-      // อัปเดตข้อมูลพนักงานในหน้าเว็บทันที
-      setEmployees((prev) =>
-        prev.map((emp) =>
-          emp._id === updatedEmployee._id ? updatedEmployee : emp
-        )
-      );
-      setIsModalOpen(false); // ปิด modal เมื่ออัปเดตเสร็จ
+  const closeModal = () => {
+    if (submitting) return;
+
+    setIsModalOpen(false);
+    setEditingEmployee(null);
+    setFormData(emptyEmployee);
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+
+    if (name === "phone" && (!/^\d*$/.test(value) || value.length > 10)) {
+      return;
+    }
+
+    if (name === "userId" && (!/^\d*$/.test(value) || value.length > 13)) {
+      return;
+    }
+
+    setFormData((previousData) => ({
+      ...previousData,
+      [name]: value,
+    }));
+  };
+
+  const validateForm = () => {
+    if (
+      !formData.name.trim() ||
+      !formData.department.trim() ||
+      !formData.phone ||
+      !formData.email.trim() ||
+      !formData.userId
+    ) {
+      setMessage({
+        type: "error",
+        text: "กรุณากรอกข้อมูลให้ครบทุกช่อง",
+      });
+      return false;
+    }
+
+    if (!editingEmployee && (!formData.username.trim() || !formData.password)) {
+      setMessage({
+        type: "error",
+        text: "กรุณากรอกชื่อผู้ใช้และรหัสผ่าน",
+      });
+      return false;
+    }
+
+    if (!editingEmployee && formData.password.length < 6) {
+      setMessage({
+        type: "error",
+        text: "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร",
+      });
+      return false;
+    }
+
+    if (formData.phone.length !== 10) {
+      setMessage({
+        type: "error",
+        text: "เบอร์โทรศัพท์ต้องมี 10 หลัก",
+      });
+      return false;
+    }
+
+    if (formData.userId.length !== 13) {
+      setMessage({
+        type: "error",
+        text: "เลขบัตรประชาชนต้องมี 13 หลัก",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!validateForm()) return;
+
+    setSubmitting(true);
+
+    const employeeData = {
+      name: formData.name.trim(),
+      department: formData.department.trim(),
+      phone: formData.phone,
+      email: formData.email.trim(),
+      userId: formData.userId,
+      role: "Employee",
+    };
+
+    try {
+      if (editingEmployee) {
+        await axios.put(
+          `${API_URL}/${editingEmployee._id}`,
+          employeeData,
+          getAuthConfig()
+        );
+
+        setMessage({
+          type: "success",
+          text: "แก้ไขข้อมูลพนักงานเรียบร้อยแล้ว",
+        });
+      } else {
+        await axios.post(
+          API_URL,
+          {
+            ...employeeData,
+            username: formData.username.trim(),
+            password: formData.password,
+          },
+          getAuthConfig()
+        );
+
+        setMessage({
+          type: "success",
+          text: "เพิ่มพนักงานและสร้างบัญชีเข้าสู่ระบบเรียบร้อยแล้ว",
+        });
+      }
+
+      closeModal();
+      await loadEmployees();
     } catch (error) {
-      console.error("Error updating employee:", error.message);
+      console.error(error);
+      setMessage({
+        type: "error",
+        text:
+          error.response?.data?.error ||
+          "ไม่สามารถบันทึกข้อมูลพนักงานได้ กรุณาลองใหม่อีกครั้ง",
+      });
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const handleDeleteEmployee = async (employeeId) => {
-    if (window.confirm("Are you sure you want to delete this employee?")) {
-      try {
-        await axios.delete(
-          `http://localhost:9000/api/data/deleteEmployee/${employeeId}`
-        );
+  const handleDelete = async (employee) => {
+    if (!window.confirm(`ต้องการลบข้อมูลของ ${employee.name} ใช่หรือไม่?`)) {
+      return;
+    }
 
-        // เรียกฟังก์ชันเพื่อดึงข้อมูลใหม่จากฐานข้อมูล
-        initData();
-      } catch (error) {
-        console.error("Error deleting employee:", error.message);
-      }
+    try {
+      await axios.delete(`${API_URL}/${employee._id}`, getAuthConfig());
+
+      setEmployees((previousEmployees) =>
+        previousEmployees.filter((item) => item._id !== employee._id)
+      );
+
+      setMessage({
+        type: "success",
+        text: "ลบข้อมูลพนักงานเรียบร้อยแล้ว",
+      });
+    } catch (error) {
+      console.error(error);
+      setMessage({
+        type: "error",
+        text: "ไม่สามารถลบข้อมูลพนักงานได้",
+      });
     }
   };
 
   return (
-    <div className="Employees">
-      <h1 className="title">ข้อมูลพนักงาน</h1>
-      <div className="menu">
-        <button className="button-add" onClick={handleShow}>
-          Add Employee
+    <main className="employees-page">
+      <section className="employees-header">
+        <div>
+          <p className="employees-eyebrow">WORKMATE ADMINISTRATION</p>
+          <h1>จัดการข้อมูลพนักงาน</h1>
+          <p className="employees-subtitle">
+            เพิ่มพนักงานพร้อมสร้างบัญชีสำหรับเข้าสู่ระบบ
+          </p>
+        </div>
+
+        <button
+          type="button"
+          className="employee-primary-button"
+          onClick={openAddModal}
+        >
+          <span>+</span>
+          เพิ่มพนักงาน
         </button>
-      </div>
+      </section>
 
-      {showAddEmployee && (
-        <div className="popup-overlay">
-          <div className="popup">
-            <h2>Add New Employee</h2>
-            <form className="form" onSubmit={handleAddEmployee}>
-              <div className="form-group">
-                <label>Name:</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={newEmployee.name}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Department:</label>
-                <input
-                  type="text"
-                  name="department"
-                  value={newEmployee.department}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Phone:</label>
-                <input
-                  type="text"
-                  name="phone"
-                  value={newEmployee.phone} // ใช้ค่า string ที่มาจาก state
-                  onChange={handleInputChange}
-                  maxLength="10" // จำกัดจำนวนตัวเลขสูงสุดเป็น 10
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Email:</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={newEmployee.email}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Thai ID:</label>
-                <input
-                  type="text"
-                  name="userId"
-                  value={newEmployee.userId}
-                  onChange={handleInputChange}
-                  maxLength="13"
-                  required
-                />
-              </div>
-              <div className="form-actions">
-                <button type="submit">Add Employee</button>
-                <button type="button" onClick={handleClose}>
-                  Close
-                </button>
-              </div>
-            </form>
-          </div>
+      {message.text && (
+        <div className={`employee-message ${message.type}`}>
+          {message.text}
         </div>
       )}
 
-      {isModalOpen && selectedEmployee && (
-        <div className="popup-overlay">
-          <div className="popup">
-            <h2>Edit Employee</h2>
-            <form className="form" onSubmit={handleUpdate}>
-              <div className="form-group">
-                <label>Name:</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={selectedEmployee.name}
-                  onChange={(e) =>
-                    setSelectedEmployee({
-                      ...selectedEmployee,
-                      name: e.target
-                    })
-                  }
-                  required
-                />
+      <section className="employees-card">
+        <div className="employees-card-header">
+          <div>
+            <h2>รายชื่อพนักงาน</h2>
+            <p>ทั้งหมด {employees.length} คน</p>
+          </div>
+
+          <button
+            type="button"
+            className="employee-refresh-button"
+            onClick={loadEmployees}
+            disabled={loading}
+          >
+            {loading ? "กำลังโหลด..." : "รีเฟรชข้อมูล"}
+          </button>
+        </div>
+
+        <div className="employee-table-wrapper">
+          <table className="employee-table">
+            <thead>
+              <tr>
+                <th>พนักงาน</th>
+                <th>แผนก</th>
+                <th>เบอร์โทรศัพท์</th>
+                <th>อีเมล</th>
+                <th className="employee-actions-heading">จัดการ</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="5" className="employee-empty-state">
+                    กำลังโหลดข้อมูลพนักงาน...
+                  </td>
+                </tr>
+              ) : employees.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="employee-empty-state">
+                    ยังไม่มีข้อมูลพนักงาน
+                  </td>
+                </tr>
+              ) : (
+                employees.map((employee) => (
+                  <tr key={employee._id}>
+                    <td>
+                      <div className="employee-name-cell">
+                        <div className="employee-avatar">
+                          {(employee.name || "?").charAt(0).toUpperCase()}
+                        </div>
+
+                        <div>
+                          <strong>{employee.name}</strong>
+                          <span>Username: {employee.username || "-"}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{employee.department || "-"}</td>
+                    <td>{employee.phone || "-"}</td>
+                    <td>{employee.email || "-"}</td>
+                    <td>
+                      <div className="employee-actions">
+                        <button
+                          type="button"
+                          className="employee-edit-button"
+                          onClick={() => openEditModal(employee)}
+                        >
+                          แก้ไข
+                        </button>
+
+                        <button
+                          type="button"
+                          className="employee-delete-button"
+                          onClick={() => handleDelete(employee)}
+                        >
+                          ลบ
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {isModalOpen && (
+        <div className="employee-modal-overlay" onMouseDown={closeModal}>
+          <section
+            className="employee-modal"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <div className="employee-modal-header">
+              <div>
+                <p className="employees-eyebrow">
+                  {editingEmployee ? "UPDATE EMPLOYEE" : "NEW EMPLOYEE"}
+                </p>
+                <h2>
+                  {editingEmployee ? "แก้ไขข้อมูลพนักงาน" : "เพิ่มพนักงานใหม่"}
+                </h2>
               </div>
-              <div className="form-group">
-                <label>Department:</label>
-                <input
-                  type="text"
-                  name="department"
-                  value={selectedEmployee.department}
-                  onChange={(e) =>
-                    setSelectedEmployee({
-                      ...selectedEmployee,
-                      department: e.target.value,
-                    })
-                  }
-                  required
-                />
+
+              <button
+                type="button"
+                className="employee-close-button"
+                onClick={closeModal}
+                disabled={submitting}
+              >
+                ×
+              </button>
+            </div>
+
+            <form className="employee-form" onSubmit={handleSubmit}>
+              <div className="employee-form-grid">
+                {!editingEmployee && (
+                  <>
+                    <label>
+                      ชื่อผู้ใช้
+                      <input
+                        type="text"
+                        name="username"
+                        value={formData.username}
+                        onChange={handleInputChange}
+                        placeholder="สำหรับเข้าสู่ระบบ"
+                        autoComplete="username"
+                        disabled={submitting}
+                        required
+                      />
+                    </label>
+
+                    <label>
+                      รหัสผ่าน
+                      <input
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        placeholder="อย่างน้อย 6 ตัวอักษร"
+                        autoComplete="new-password"
+                        disabled={submitting}
+                        required
+                      />
+                    </label>
+                  </>
+                )}
+
+                <label>
+                  ชื่อ-นามสกุล
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    disabled={submitting}
+                    required
+                  />
+                </label>
+
+                <label>
+                  แผนก
+                  <input
+                    type="text"
+                    name="department"
+                    value={formData.department}
+                    onChange={handleInputChange}
+                    disabled={submitting}
+                    required
+                  />
+                </label>
+
+                <label>
+                  เบอร์โทรศัพท์
+                  <input
+                    type="text"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    inputMode="numeric"
+                    maxLength="10"
+                    disabled={submitting}
+                    required
+                  />
+                </label>
+
+                <label>
+                  อีเมล
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    disabled={submitting}
+                    required
+                  />
+                </label>
+
+                <label className="employee-form-full">
+                  เลขบัตรประชาชน
+                  <input
+                    type="text"
+                    name="userId"
+                    value={formData.userId}
+                    onChange={handleInputChange}
+                    inputMode="numeric"
+                    maxLength="13"
+                    disabled={submitting}
+                    required
+                  />
+                </label>
               </div>
-              <div className="form-group">
-                <label>Phone:</label>
-                <input
-                  type="text"
-                  name="phone"
-                  value={selectedEmployee.phone}
-                  onChange={(e) =>
-                    setSelectedEmployee({
-                      ...selectedEmployee,
-                      phone: e.target.value,
-                    })
-                  }
-                  maxLength="10"
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Email:</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={selectedEmployee.email}
-                  onChange={(e) =>
-                    setSelectedEmployee({
-                      ...selectedEmployee,
-                      email: e.target.value,
-                    })
-                  }
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Thai ID:</label>
-                <input
-                  type="text"
-                  name="userId"
-                  value={selectedEmployee.userId}
-                  onChange={(e) =>
-                    setSelectedEmployee({
-                      ...selectedEmployee,
-                      userId: e.target.value,
-                    })
-                  }
-                  maxLength="13"
-                  required
-                />
-              </div>
-              <div className="form-actions">
-                <button type="submit">Update Employee</button>
-                <button type="button" onClick={() => setIsModalOpen(false)}>
-                  Close
+
+              <div className="employee-form-actions">
+                <button
+                  type="button"
+                  className="employee-cancel-button"
+                  onClick={closeModal}
+                  disabled={submitting}
+                >
+                  ยกเลิก
+                </button>
+
+                <button
+                  type="submit"
+                  className="employee-primary-button"
+                  disabled={submitting}
+                >
+                  {submitting
+                    ? "กำลังบันทึก..."
+                    : editingEmployee
+                      ? "บันทึกการแก้ไข"
+                      : "เพิ่มพนักงาน"}
                 </button>
               </div>
             </form>
-          </div>
+          </section>
         </div>
       )}
-
-      <table className="employee-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Department</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {employees.map((employee) => (
-            <tr key={employee._id}>
-              <td>{employee.name}</td>
-              <td>{employee.department}</td>
-              <td>{employee.phone}</td>
-              <td>{employee.email}</td>
-              <td>
-                <button onClick={() => handleEditClick(employee)}>Edit</button>
-                <button onClick={() => handleDeleteEmployee(employee._id)}>
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    </main>
   );
 }
 

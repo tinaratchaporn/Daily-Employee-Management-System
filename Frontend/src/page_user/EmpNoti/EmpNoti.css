@@ -1,87 +1,210 @@
-/* EmpNoti.css */
-
-.EmpNoti-container {
-  font-family: 'Prompt', sans-serif;
-  text-align: center;
-  padding: 20px;
-  background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  color: #333;
+.emp-noti-page {
+  min-height: 100%;
+  padding: 32px;
+  background: #f8fafc;
+  color: #1e293b;
 }
 
-.EmpNoti-container h1 {
-  font-size: 2.5em;
+.emp-noti-header-card,
+.emp-noti-content-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.emp-noti-header-card {
   margin-bottom: 20px;
-  color: #5b5f97;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.notification-table {
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  border-collapse: collapse;
+  padding: 24px 26px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
   background: #ffffff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.emp-noti-eyebrow {
+  margin: 0 0 7px;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.emp-noti-header-card h1,
+.emp-noti-content-heading h2 {
+  margin: 0;
+  color: #1e293b;
+}
+
+.emp-noti-header-card h1 {
+  font-size: 27px;
+}
+
+.emp-noti-header-card p:not(.emp-noti-eyebrow),
+.emp-noti-content-heading p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.emp-noti-refresh-button {
+  min-height: 42px;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
   border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.notification-table thead {
-  background: #5b5f97;
-  color: #ffffff;
-}
-
-.notification-table th, .notification-table td {
-  padding: 15px;
-  text-align: center;
-  border: 1px solid #ddd;
-}
-
-.notification-table tbody tr:nth-child(odd) {
-  background: #f9f9f9;
-}
-
-.notification-table tbody tr:nth-child(even) {
-  background: #f1f1f1;
-}
-
-.notification-table tbody tr:hover {
-  background: #e0e7ff;
+  background: #ffffff;
+  color: #475569;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
 }
 
-/* Status styles */
-.status-approved {
-  color: #2ecc71;
-  font-weight: bold;
+.emp-noti-refresh-button:hover:not(:disabled) {
+  border-color: #93c5fd;
+  background: #eff6ff;
+  color: #2563eb;
 }
 
-.status-rejected {
-  color: #e74c3c;
-  font-weight: bold;
+.emp-noti-refresh-button:disabled,
+.emp-noti-delete-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
-.status-pending {
-  color: #f1c40f;
-  font-weight: bold;
+.emp-noti-message {
+  margin-bottom: 20px;
+  padding: 13px 15px;
+  border-radius: 10px;
+  font-size: 14px;
 }
 
-/* Loading animation */
-.loading {
-  font-size: 1.5em;
-  color: #5b5f97;
-  margin-top: 20px;
-  animation: pulse 1.5s infinite;
+.emp-noti-message.success {
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+  color: #15803d;
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
+.emp-noti-message.error {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.emp-noti-content-card {
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.05);
+}
+
+.emp-noti-content-heading {
+  padding: 22px 25px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.emp-noti-content-heading h2 {
+  font-size: 18px;
+}
+
+.emp-noti-count {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.emp-noti-list-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.emp-noti-list {
+  min-width: 820px;
+}
+
+.emp-noti-row {
+  display: grid;
+  grid-template-columns: 1.1fr 1.2fr 2fr 1.1fr 0.8fr;
+  align-items: center;
+  min-height: 64px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #475569;
+  font-size: 14px;
+}
+
+.emp-noti-row > span {
+  padding: 0 24px;
+}
+
+.emp-noti-list-head {
+  min-height: 56px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.emp-noti-row:not(.emp-noti-list-head):hover {
+  background: #f8fbff;
+}
+
+.emp-noti-status {
+  display: inline-flex;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.emp-noti-status.pending {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.emp-noti-status.approved {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.emp-noti-status.rejected {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.emp-noti-delete-button {
+  padding: 7px 11px;
+  border: 0;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #dc2626;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.emp-noti-delete-button:hover:not(:disabled) {
+  background: #fee2e2;
+}
+
+.emp-noti-empty {
+  padding: 46px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .emp-noti-page {
+    padding: 20px 16px;
   }
-  50% {
-    opacity: 0.5;
+
+  .emp-noti-header-card,
+  .emp-noti-content-heading {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
-

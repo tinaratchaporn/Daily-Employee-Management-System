@@ -2,82 +2,111 @@ import "./EmpUser.css";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-function User({ setRole, setToken }) {
-  const navigate = useNavigate(); // กำหนด navigate
+function EmpUser({ setRole, setToken }) {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // เพิ่ม state สำหรับการโหลด
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // ดึงข้อมูลผู้ใช้จาก localStorage
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    console.log(storedUser); // ตรวจสอบข้อมูลที่ได้จาก localStorage
-    if (storedUser) {
-      setUser(storedUser); // หากมีข้อมูลผู้ใช้ให้ตั้งค่าใน state
-      setLoading(false); // เปลี่ยนเป็น false เมื่อข้อมูลโหลดเสร็จ
-    } else {
-      // ถ้าไม่มีข้อมูลผู้ใช้ใน localStorage แสดงข้อความ
-      console.log("ไม่มีข้อมูลผู้ใช้ใน localStorage");
-      setLoading(false); // เปลี่ยนเป็น false เมื่อไม่พบข้อมูล
+    try {
+      const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+      setUser(storedUser);
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  const Logout = () => {
-    // ยืนยันก่อนออกจากระบบ
-    const confirmLogout = window.confirm("คุณต้องการออกจากระบบหรือไม่?");
-    if (confirmLogout) {
-      // ลบ token และ user จาก localStorage
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("userRole");
-      localStorage.removeItem("user"); // ลบข้อมูลผู้ใช้
-
-      // รีเซ็ต state ใน app.js
-      setToken("");
-      setRole("");
-
-      // เปลี่ยนเส้นทางไปหน้า login
-      navigate("/login");
+  const handleLogout = () => {
+    if (!window.confirm("ต้องการออกจากระบบใช่หรือไม่?")) {
+      return;
     }
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("role");
+
+    setToken("");
+    setRole("");
+
+    navigate("/", { replace: true });
   };
 
+  const displayName = user?.name || user?.username || "Employee";
+  const initial = displayName.charAt(0).toUpperCase();
+
   return (
-    <div className="user-container">
-      <div className="profile-container">
-        <div className="section">
-          <div className="profile-section">
-            <div>
-              {/* แสดงข้อมูลจาก state ที่ดึงมาจาก localStorage */}
-              {loading ? (
-                <p>กำลังโหลดข้อมูล...</p> // ถ้ากำลังโหลดข้อมูล
-              ) : user ? (
-                <>
-                  <h2>{user.username}</h2>
-                  <p>{user.role}</p>
-                </>
-              ) : (
-                <p>ไม่พบข้อมูลผู้ใช้</p> // หากไม่พบข้อมูลจาก localStorage
-              )}
-            </div>
-          </div>
-          <section>
-            <div className="card">
-              <h4>รายละเอียด</h4>
-              <p>ตำแหน่ง: {user?.department || "Not Available"}</p>
-              <p>เบอร์โทรศัพท์: {user?.phone || "Not Available"}</p>
-              <p>E-mail: {user?.email || "Not Available"}</p>
-             
-            </div>
-
-          </section>
+    <main className="emp-user-page">
+      <section className="emp-user-header-card">
+        <div>
+          <p className="emp-user-eyebrow">WORKMATE EMPLOYEE</p>
+          <h1>โปรไฟล์ของฉัน</h1>
+          <p>ตรวจสอบข้อมูลบัญชีผู้ใช้งานของคุณ</p>
         </div>
-      </div>
+      </section>
 
-      <div className="logout-container">
-        <button type="button" className="btn btn-danger" onClick={Logout}>
-          Logout
+      <section className="emp-profile-card">
+        {loading ? (
+          <div className="emp-user-loading">กำลังโหลดข้อมูล...</div>
+        ) : !user ? (
+          <div className="emp-user-loading">
+            ไม่พบข้อมูลผู้ใช้งาน กรุณาเข้าสู่ระบบใหม่
+          </div>
+        ) : (
+          <>
+            <div className="emp-profile-summary">
+              <div className="emp-profile-avatar">{initial}</div>
+
+              <div>
+                <h2>{displayName}</h2>
+                <p>@{user.username || "-"}</p>
+                <span className="emp-role-badge">Employee</span>
+              </div>
+            </div>
+
+            <div className="emp-profile-details">
+              <div className="emp-profile-detail">
+                <span>แผนก</span>
+                <strong>{user.department || "-"}</strong>
+              </div>
+
+              <div className="emp-profile-detail">
+                <span>เบอร์โทรศัพท์</span>
+                <strong>{user.phone || "-"}</strong>
+              </div>
+
+              <div className="emp-profile-detail">
+                <span>อีเมล</span>
+                <strong>{user.email || "-"}</strong>
+              </div>
+
+              <div className="emp-profile-detail">
+                <span>เลขประจำตัวประชาชน</span>
+                <strong>{user.userId || "-"}</strong>
+              </div>
+            </div>
+          </>
+        )}
+      </section>
+
+      <section className="emp-user-logout-card">
+        <div>
+          <h2>ออกจากระบบ</h2>
+          <p>คุณจะต้องเข้าสู่ระบบอีกครั้งเพื่อใช้งานต่อ</p>
+        </div>
+
+        <button
+          type="button"
+          className="emp-logout-button"
+          onClick={handleLogout}
+        >
+          ออกจากระบบ
         </button>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
 
-export default User;
+export default EmpUser;

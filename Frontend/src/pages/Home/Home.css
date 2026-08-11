@@ -1,0 +1,225 @@
+.home {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.home-bg-circle {
+  position: absolute;
+  width: 700px;
+  height: 700px;
+
+  top: -350px;
+  right: -250px;
+
+  border-radius: 50%;
+  background: #2563eb0d;
+  filter: blur(2px);
+}
+
+.home-content {
+  width: 100%;
+  max-width: 900px;
+  padding: 50px 30px;
+
+  text-align: center;
+  position: relative;
+  z-index: 1;
+
+  animation: fadeIn 0.6s ease;
+}
+
+.home-logo {
+  width: 220px;
+  max-width: 70%;
+  height: auto;
+  object-fit: contain;
+
+  margin-bottom: 12px;
+}
+
+.home-content h1 {
+  margin: 0;
+
+  font-size: 46px;
+  font-weight: 700;
+  letter-spacing: -1px;
+
+  color: #1e293b;
+}
+
+.home-subtitle {
+  margin: 8px 0 0;
+
+  font-size: 18px;
+  font-weight: 500;
+
+  color: #64748b;
+}
+
+.home-description {
+  margin: 45px 0 25px;
+
+  font-size: 15px;
+  color: #94a3b8;
+}
+
+.workspace-container {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+
+  gap: 24px;
+}
+
+.workspace-card {
+  width: 320px;
+  min-height: 210px;
+
+  padding: 32px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 22px;
+
+  background: #ffffff;
+  color: #1e293b;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.workspace-card:hover {
+  transform: translateY(-6px);
+
+  background: #ffffff;
+  border-color: #93c5fd;
+
+  box-shadow: 0 18px 40px rgba(37, 99, 235, 0.12);
+}
+
+.workspace-card:focus,
+.workspace-card:focus-visible {
+  outline: none;
+  background: #ffffff;
+  border-color: #2563eb;
+}
+
+.workspace-card:active {
+  transform: translateY(-2px);
+  background: #f8fafc;
+}
+
+.workspace-card,
+.workspace-card:hover,
+.workspace-card:focus,
+.workspace-card:active {
+  font-family: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.workspace-icon {
+  width: 58px;
+  height: 58px;
+
+  margin-bottom: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 16px;
+
+  background: #eff6ff;
+  color: #2563eb;
+
+  font-size: 27px;
+}
+
+.workspace-info h2 {
+  margin: 0;
+
+  font-size: 20px;
+  font-weight: 600;
+
+  color: #1e293b;
+}
+
+.workspace-info span {
+  display: block;
+
+  margin-top: 10px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  color: #2563eb;
+}
+
+.home-footer {
+  margin-top: 45px;
+
+  font-size: 13px;
+
+  color: #94a3b8;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 700px) {
+  .home-content {
+    padding: 40px 20px;
+  }
+
+  .home-logo {
+    width: 180px;
+  }
+
+  .home-content h1 {
+    font-size: 38px;
+  }
+
+  .home-subtitle {
+    font-size: 16px;
+  }
+
+  .workspace-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .workspace-card {
+    width: 100%;
+    max-width: 340px;
+  }
+}
