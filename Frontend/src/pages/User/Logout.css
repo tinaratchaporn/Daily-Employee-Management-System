@@ -1,42 +1,198 @@
-/* Logout.css */
+.user-container {
+  min-height: 100%;
+  padding: 32px;
+  background: #f8fafc;
+  color: #1e293b;
+}
 
-
-
+/* =========================
+   Profile Card
+========================= */
 
 .profile-container {
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 8px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.05);
 }
+
+/* =========================
+   Main Section
+========================= */
+
+.section {
+  padding: 28px;
+}
+
+/* =========================
+   Profile Header
+========================= */
 
 .profile-section {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+
+  min-height: 90px;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.profile-section img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  margin-right: 20px;
+.profile-section h2 {
+  margin: 0;
+
+  color: #1e293b;
+
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.profile-section p {
+  margin: 6px 0 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+}
+
+/* =========================
+   Details Card
+========================= */
+
+.section > section {
+  margin: 0;
 }
 
 .card {
-  background-color: #ffffff;
-  padding: 15px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  margin: 0;
+  padding: 22px 24px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: #f8fafc;
 }
 
+.card h4 {
+  margin: 0 0 18px;
+
+  color: #1e293b;
+
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.card p {
+  display: flex;
+  align-items: center;
+
+  min-height: 42px;
+  margin: 0;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  color: #64748b;
+
+  font-size: 14px;
+}
+
+.card p:last-child {
+  border-bottom: 0;
+}
+
+/* =========================
+   Logout
+========================= */
+
 .logout-container {
-  text-align: center;
-  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end;
+
+  width: 100%;
+  max-width: 900px;
+
+  margin: 18px auto 0;
 }
 
 .logout-container button {
-  padding: 10px 20px;
-  font-size: 16px;
+  min-height: 42px;
+  padding: 10px 18px;
+
+  border: 0 !important;
+  border-radius: 10px !important;
+
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
   cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.logout-container button:hover {
+  background: #fee2e2 !important;
+  color: #b91c1c !important;
+
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.12);
+}
+
+.logout-container button:active {
+  transform: translateY(0);
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 700px) {
+  .user-container {
+    padding: 22px 16px;
+  }
+
+  .section {
+    padding: 22px;
+  }
+
+  .profile-section h2 {
+    font-size: 22px;
+  }
+
+  .logout-container {
+    justify-content: stretch;
+  }
+
+  .logout-container button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 460px) {
+  .user-container {
+    padding: 18px 12px;
+  }
+
+  .section {
+    padding: 20px;
+  }
+
+  .profile-section {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+  }
+
+  .card {
+    padding: 18px;
+  }
 }

@@ -1,15 +1,17 @@
-import { Outlet } from 'react-router';
-import './LayoutEmp.css'
-import SidebarEmp from '../SidebarEmp/SidebarEmp'
+import { Outlet } from "react-router-dom";
+import SidebarEmp from "../SidebarEmp/SidebarEmp";
+import "./LayoutEmp.css";
 
 function LayoutEmp() {
-          return(
-                    <div className='layout'>
-                              <SidebarEmp />
-                              <Outlet />
+  return (
+    <div className="layout-emp">
+      <SidebarEmp />
 
-                    </div>
-          )
+      <main className="layout-emp-content">
+        <Outlet />
+      </main>
+    </div>
+  );
 }
 
 export default LayoutEmp;

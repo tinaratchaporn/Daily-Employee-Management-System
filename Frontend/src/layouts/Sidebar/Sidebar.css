@@ -1,113 +1,162 @@
-/* ให้ html และ body ครอบคลุมความสูงเต็มหน้าจอ */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%; /* ทำให้ html และ body ครอบคลุมหน้าจอทั้งหมด */
-  font-family: 'Arial', sans-serif;
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: 0.9fr 5fr; /* ความกว้างของ Sidebar และ Content */
-  grid-template-areas: "sidebar body"; 
-  height: 100vh; /* ทำให้ layout ครอบคลุมหน้าจอทั้งหมด */
-}
-
 .sidebar {
-  grid-area: sidebar;
-  min-height: 100vh; /* ใช้ min-height เพื่อให้ sidebar เต็มหน้าจอ */
   width: 250px;
-  background-color: #231f20;
+  min-height: 100vh;
+  height: 100%;
+
+  box-sizing: border-box;
+
   display: flex;
   flex-direction: column;
+
+  background: #231f20;
+  color: #ffffff;
 }
 
-/* ส่วนโลโก้ */
-.sidebar-top {
-  text-align: center;
-  padding: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
+/* Brand */
 
-.sidebar-logo img {
-  max-width: 80%;
-  border-radius: 10px;
-}
-
-.sidebar-name {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-top: 10px;
-  color: #f8f9fa;
-}
-
-/* เมนู Sidebar */
-.sidebar-menu {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 0;
-  gap: 10px;
-}
-
-.sidebar-menu a {
-  text-decoration: none;
-  color: white;
-}
-
-.sidebar-menu button {
-  background: none;
-  border: none;
-  color: white;
-  text-align: left;
-  width: 100%;
-  padding: 15px 20px;
-  font-size: 1rem;
+.sidebar-brand {
   display: flex;
   align-items: center;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  gap: 12px;
+
+  padding: 24px 20px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.sidebar-menu button:hover {
-  background-color: #495057;
+.sidebar-logo {
+  width: 42px;
+  height: 42px;
+
+  object-fit: contain;
+  flex: 0 0 auto;
 }
 
-.sidebar-menu .bi {
-  font-size: 1.2rem;
-  margin-right: 10px;
+.sidebar-brand h2 {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: 18px;
+  font-weight: 700;
 }
 
-.sidebar-footer button:hover {
-  color: #adb5bd;
+.sidebar-brand span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #9ca3af;
+
+  font-size: 11px;
 }
 
-.sidebar-footer .bi {
-  font-size: 1.5rem;
-  margin-right: 10px;
+/* Menu */
+
+.sidebar-menu {
+  display: flex;
+  flex: 1;
+
+  flex-direction: column;
+  gap: 5px;
+
+  padding: 20px 12px;
 }
 
-/* รองรับหน้าจอขนาดเล็ก */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  min-height: 44px;
+
+  box-sizing: border-box;
+
+  padding: 10px 13px;
+
+  border-radius: 9px;
+
+  color: #a1a1aa;
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.sidebar-link svg {
+  width: 17px;
+  height: 17px;
+
+  flex: 0 0 auto;
+}
+
+/* Active */
+
+.sidebar-link.active {
+  background: #343031;
+  color: #ffffff;
+
+  font-weight: 600;
+}
+
+.sidebar-link:hover {
+  background: #2d292a;
+  color: #ffffff;
+}
+
+.sidebar-link.active:hover {
+  background: #343031;
+}
+
+/* Footer */
+
+.sidebar-footer {
+  padding: 18px 20px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-footer span {
+  display: block;
+
+  color: #a1a1aa;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sidebar-footer small {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #71717a;
+
+  font-size: 11px;
+}
+
+/* Mobile */
+
 @media (max-width: 768px) {
-  .layout {
-    grid-template-columns: 1fr; /* Sidebar เต็มความกว้าง */
-    grid-template-areas: 
-      "sidebar"
-      "body";
-  }
-
   .sidebar {
     width: 100%;
-    min-height: 100vh; /* ให้ Sidebar เต็มความสูง */
+    min-height: auto;
+    height: auto;
   }
 
-  .sidebar-menu button {
-    font-size: 0.9rem;
-    padding: 10px 15px;
+  .sidebar-brand {
+    padding: 18px;
   }
 
-  .sidebar-footer button {
-    font-size: 0.9rem;
+  .sidebar-menu {
+    padding: 12px;
+  }
+
+  .sidebar-footer {
+    display: none;
   }
 }

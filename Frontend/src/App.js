@@ -20,8 +20,7 @@ import EmpSet from "./page_user/EmpSet/EmpSet";
 import EmpNoti from "./page_user/EmpNoti/EmpNoti";
 import EmpUser from "./page_user/Emp/EmpUser";
 
-import About from "./layouts/Sidebar/About";
-import About2 from "./layouts/SidebarEmp/About2";
+import About from "./pages/About/About";
 
 const getStoredUser = () => {
   try {
@@ -54,36 +53,47 @@ function App() {
         element={<Login setToken={setToken} setRole={setRole} />}
       />
 
+      {/* ================= ADMIN ================= */}
       {isLoggedIn && isAdmin && (
         <Route element={<Layout />}>
           <Route path="/employees" element={<Employees />} />
           <Route path="/working-status" element={<WorkingS />} />
           <Route path="/notifications" element={<Notification />} />
+
           <Route
             path="/user"
             element={<User setToken={setToken} setRole={setRole} />}
           />
+
           <Route path="/about" element={<About />} />
         </Route>
       )}
 
+      {/* ================= EMPLOYEE ================= */}
       {isLoggedIn && !isAdmin && (
         <Route element={<LayoutEmp />}>
           <Route path="/EmpSet" element={<EmpSet />} />
           <Route path="/EmpNotifications" element={<EmpNoti />} />
+
           <Route
             path="/EmpUser"
             element={<EmpUser setToken={setToken} setRole={setRole} />}
           />
-          <Route path="/about2" element={<About2 />} />
+
+          {/* ใช้ About ตัวเดียวกับ Admin */}
+          <Route path="/about" element={<About />} />
         </Route>
       )}
 
+      {/* ================= FALLBACK ================= */}
       <Route
         path="*"
         element={
           isLoggedIn ? (
-            <Navigate to={isAdmin ? "/employees" : "/EmpSet"} replace />
+            <Navigate
+              to={isAdmin ? "/employees" : "/EmpSet"}
+              replace
+            />
           ) : (
             <Navigate to="/" replace />
           )

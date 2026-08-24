@@ -1,63 +1,87 @@
 import "./Sidebar.css";
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-
-const initPage = "Dashboard";
+import { NavLink } from "react-router-dom";
+import {
+  FaUsers,
+  FaClock,
+  FaBell,
+  FaUserCircle,
+  FaInfoCircle,
+} from "react-icons/fa";
+import logo from "../../Images/workmate-logo.png";
 
 function Sidebar({ role }) {
-  const [tab, setTab] = useState(initPage);
-
   return (
-    <div className="sidebar">
-      <div className="sidebar-menu">
-       
-        <Link to="/employees">
-          <button
-            className={tab === "Employees" ? "active" : ""}
-            onClick={() => setTab("Employees")}
-          >
-            <span className="bi bi-people-fill"> &nbsp;&nbsp;พนักงาน</span>
-          </button>
-        </Link>
-        <Link to="/working-status">
-          <button
-            className={tab === "Working Status" ? "active" : ""}
-            onClick={() => setTab("Working Status")}
-          >
-            <span className="bi bi-clock-history">&nbsp; สถานะการทำงาน</span>
-          </button>
-        </Link>
-      
-        <Link to="/notifications">
-          <button
-            className={tab === "Notifications" ? "active" : ""}
-            onClick={() => setTab("Notifications")}
-          >
-            <span className="bi bi-bell-fill"> &nbsp;การแจ้งเตือน</span>
-          </button>
-        </Link>
-       
-        <Link to="/user">
-          <button
-            className={tab === "User" ? "active" : ""}
-            onClick={() => setTab("User")}
-          >
-            <span className="bi bi-person-circle"> &nbsp; ออกจากระบบ</span>
-          </button>
-        </Link>
+    <aside className="sidebar">
+      <div className="sidebar-brand">
+        <img
+          src={logo}
+          alt="WorkMate"
+          className="sidebar-logo"
+        />
 
-        <Link to="/about">
-          <button
-            className={tab === "About" ? "active" : ""}
-            onClick={() => setTab("About")}
-          >
-            <span className="bi bi-info-circle"> &nbsp; About</span>
-          </button>
-        </Link>
-
-
+        <div>
+          <h2>WorkMate</h2>
+          <span>{role || "Administrator"}</span>
+        </div>
       </div>
-    </div>
+
+      <nav className="sidebar-menu">
+        <NavLink
+          to="/employees"
+          className={({ isActive }) =>
+            `sidebar-link ${isActive ? "active" : ""}`
+          }
+        >
+          <FaUsers />
+          <span>พนักงาน</span>
+        </NavLink>
+
+        <NavLink
+          to="/working-status"
+          className={({ isActive }) =>
+            `sidebar-link ${isActive ? "active" : ""}`
+          }
+        >
+          <FaClock />
+          <span>สถานะการทำงาน</span>
+        </NavLink>
+
+        <NavLink
+          to="/notifications"
+          className={({ isActive }) =>
+            `sidebar-link ${isActive ? "active" : ""}`
+          }
+        >
+          <FaBell />
+          <span>การแจ้งเตือน</span>
+        </NavLink>
+
+        <NavLink
+          to="/user"
+          className={({ isActive }) =>
+            `sidebar-link ${isActive ? "active" : ""}`
+          }
+        >
+          <FaUserCircle />
+          <span>บัญชีผู้ใช้</span>
+        </NavLink>
+
+        <NavLink
+          to="/about"
+          className={({ isActive }) =>
+            `sidebar-link ${isActive ? "active" : ""}`
+          }
+        >
+          <FaInfoCircle />
+          <span>เกี่ยวกับระบบ</span>
+        </NavLink>
+      </nav>
+
+      <div className="sidebar-footer">
+        <span>WorkMate</span>
+        <small>© 2026</small>
+      </div>
+    </aside>
   );
 }
 

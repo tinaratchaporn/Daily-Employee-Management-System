@@ -1,91 +1,70 @@
 import "./SidebarEmp.css";
-import { Link } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
-const initPage = "EmpDashboard";
+import { NavLink } from "react-router-dom";
 
 function SidebarEmp() {
-  const [tab, setTab] = useState("");
-
-  useEffect(() => {
-    setTab(initPage);
-  }, []);
-
-
-  const EmpNotificationRef = useRef();
-  const EmpSettingsRef = useRef();
-  const EmpAbout2Ref = useRef();
-  const EmpUserRef = useRef();
-
-  useEffect(() => {
-    if (tab === "EmpNotifications") {
-      EmpNotificationRef.current.click();
-    } else if (tab === "EmpSet") {
-      EmpSettingsRef.current.click();
-    } else if (tab === "EmpUser") {
-      EmpUserRef.current.click();
-    } else if (tab === "about2"){
-      EmpAbout2Ref.current.click();
-    }
-  }, [tab]);
   return (
-    <div className="sidebar-Emp">
-      <div className="sidebar">
-        <div className="sidebar-menu">
-          
-         
+    <aside className="sidebar-emp">
 
-          <Link to="/EmpNotifications" ref={EmpNotificationRef}>
-            <button
-              className="btn btn-link"
-              style={{ color: "white", textDecoration: "none" }}
-              onClick={() => setTab("EmpNotifications")}
-            >
-              <span className="bi bi-bell-fill">
-                &nbsp;&nbsp;&nbsp;การแจ้งเตือน
-              </span>
-            </button>
-          </Link>
-
-
-          <Link to="/EmpSet" ref={EmpSettingsRef}>
-            <button
-              className="btn btn-link"
-              style={{ color: "white", textDecoration: "none" }}
-              onClick={() => setTab("Settings")}
-            >
-              <span class="bi bi-file-earmark-fill">
-                &nbsp;&nbsp;&nbsp;ลงงาน / ลางาน
-              </span>
-            </button>
-          </Link>
-
-
-          <Link to="/EmpUser" ref={EmpUserRef}>
-            <button
-              className="btn btn-link"
-              style={{ color: "white", textDecoration: "none" }}
-              onClick={() => setTab("EmpUser")}
-            >
-              <span className="bi bi-person-circle"> &nbsp;&nbsp;&nbsp;ออกจากระบบ</span>
-            </button>
-          </Link>
-
-
-          <Link to="/about2" ref={EmpAbout2Ref}>
-            <button
-              className="btn btn-link"
-              style={{ color: "white", textDecoration: "none" }}
-              onClick={() => setTab("about2")}
-            >
-              <span className="bi bi-info-circle"> &nbsp;&nbsp;&nbsp;About</span>
-            </button>
-          </Link>
-        
-
-
+      {/* Brand */}
+      <div className="sidebar-emp-brand">
+        <div className="sidebar-emp-brand-text">
+          <h2>WorkMate</h2>
+          <span>Employee</span>
         </div>
       </div>
-    </div>
+
+      {/* Menu */}
+      <nav className="sidebar-emp-menu">
+
+        <NavLink
+          to="/EmpNotifications"
+          className={({ isActive }) =>
+            `sidebar-emp-link ${isActive ? "active" : ""}`
+          }
+        >
+          <i className="bi bi-bell-fill"></i>
+          <span>การแจ้งเตือน</span>
+        </NavLink>
+
+        <NavLink
+          to="/EmpSet"
+          className={({ isActive }) =>
+            `sidebar-emp-link ${isActive ? "active" : ""}`
+          }
+        >
+          <i className="bi bi-file-earmark-fill"></i>
+          <span>ลงงาน / ลางาน</span>
+        </NavLink>
+
+        <NavLink
+          to="/EmpUser"
+          className={({ isActive }) =>
+            `sidebar-emp-link ${isActive ? "active" : ""}`
+          }
+        >
+          <i className="bi bi-person-circle"></i>
+          <span>บัญชีผู้ใช้</span>
+        </NavLink>
+
+        <NavLink
+          to="/about"
+          className={({ isActive }) =>
+            `sidebar-emp-link ${isActive ? "active" : ""}`
+          }
+        >
+          <i className="bi bi-info-circle"></i>
+          <span>About</span>
+        </NavLink>
+
+      </nav>
+
+      {/* Footer */}
+      <div className="sidebar-emp-footer">
+        <span>WorkMate</span>
+        <small>© 2026</small>
+      </div>
+
+    </aside>
   );
 }
 

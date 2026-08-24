@@ -1,0 +1,59 @@
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+
+  width: 100%;
+  min-height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  background: #f8fafc;
+}
+
+.layout-content {
+  min-width: 0;
+  min-height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  overflow-x: hidden;
+}
+
+/* ให้ Sidebar ยืดเต็มความสูงของ Layout */
+.layout > .sidebar {
+  width: 250px;
+  min-height: 100vh;
+  height: 100%;
+
+  box-sizing: border-box;
+  align-self: stretch;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .layout {
+    display: block;
+    min-height: 100vh;
+  }
+
+  .layout > .sidebar {
+    width: 100%;
+    min-height: auto;
+    height: auto;
+  }
+
+  .layout-content {
+    min-height: auto;
+  }
+}
